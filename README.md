@@ -1,5 +1,5 @@
 ## TODO
-- Add Items With A Heder, Description And Piriority (Color Will Change)
+- ~~Add Items With A Header, Description,~~ Label And ~~Piriority~~ (Color Will Change)
 - Edit Items
 - Add Lists With A Header And Custome Color
 - Edit Lists

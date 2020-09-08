@@ -5,22 +5,26 @@
       v-bind:key="list.listId"
       v-bind:listId="list.listId"
     />
+    <ControlPanel/>
+
   </div>
 </template>
 
 <script>
 import TodoList from './components/TodoList.vue'
+import ControlPanel from './components/ContorlPanel'
+
 
 export default {
   name: 'App',
   components: {
-    TodoList
+    TodoList,
+    ControlPanel
   },
   data() {
     return{
       lists: [
-        {listId:0},
-        {listId:1}
+        {listId:0}
       ]
     }
   }
