@@ -1,10 +1,13 @@
 <template>
   <div class="app">
-    <TodoList
-      v-for="list in lists"
-      v-bind:key="list.listId"
-      v-bind:listId="list.listId"
-    />
+    <div class="row">
+      <TodoList
+        class="col"
+        v-for="list in lists"
+        v-bind:key="list.listId"
+        v-bind:listId="list.listId"
+      />
+    </div>
     <ControlPanel/>
 
   </div>
@@ -24,7 +27,7 @@ export default {
   data() {
     return{
       lists: [
-        {listId:0}
+        {listId: 0}
       ]
     }
   }

@@ -1,5 +1,7 @@
 <template>
-    <div class='todoItem card m-2 w-50'>
+    <div 
+        class='TodoItem card m-2 w-75'
+        v-bind:style="`background-color: ${itemPriority.btnColor}`">
         <p 
             v-bind:class="{checked:this.completed}"
             class="m-2"> 
@@ -7,22 +9,26 @@
                 type="checkbox" 
                 v-on:change="check">
             {{itemHeader}}
-            <b-button
+            <!-- Labels -->
+            <b-button   
                 class="m-1 labels"
                 type="button"
-                v-bind:style="`background-color: ${itemLabel};`">
+                v-bind:style="`background-color: ${itemLabel};`"
+                style="cursor:unset;">
             </b-button>
-            <button
-                class="btn"
+            <!-- Priority -->
+            <!-- <button
+                class="btn p-0"
                 type="button"
-                v-bind:class= "`btn-${itemPriority.btnType}`">
+                v-bind:class= "`btn-${itemPriority.btnType}`"
+                style="width: 6em; font-size: 10px; cursor:unset;">
                 {{itemPriority.btnText}}
-            </button>
+            </button> -->
         </p>
         <button
             v-on:click="removeItem"
-            class="btn btn-danger m-0 removeItemBtn">
-            Remove</button>
+            class="btn btn-danger m-0 h-100 removeItemBtn">
+            X</button>
     </div>
 </template>
 
@@ -57,12 +63,27 @@ export default {
 
     .removeItemBtn{
         position: absolute;
-        right: .1em;
-        top: .05em
+        right: -.2em;
     }
 
     .labels{
         border: none;
         height: 1.2em;
     }
+
+    .TodoItem{
+        position: relative;
+        /* left: 2em; */
+        /* width: 75%; */
+    }
+
+/* rabbit mq
+tasks ?
+// REST API
+// session and cookie
+// swagger
+// framework spring
+// java web
+// Java - > Java Web --> Spring >> Spring Boot  */
 </style>
+
