@@ -1,7 +1,6 @@
 <template>
     <div 
-        class='TodoItem card m-2 w-75'
-        v-bind:style="`background-color: ${itemPriority.btnColor}`">
+        class='TodoItem card m-2 w-50'>
         <p 
             v-bind:class="{checked:this.completed}"
             class="m-2"> 
@@ -17,13 +16,13 @@
                 style="cursor:unset;">
             </b-button>
             <!-- Priority -->
-            <!-- <button
+            <button
                 class="btn p-0"
                 type="button"
                 v-bind:class= "`btn-${itemPriority.btnType}`"
-                style="width: 6em; font-size: 10px; cursor:unset;">
+                style="width: 6em; font-size: 10px; cursor:unset; position:relative;">
                 {{itemPriority.btnText}}
-            </button> -->
+            </button>
         </p>
         <button
             v-on:click="removeItem"

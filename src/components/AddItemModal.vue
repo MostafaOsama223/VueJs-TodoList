@@ -64,6 +64,7 @@ export default {
     },
     methods: {
         modalOk(){
+            console.log('ok')
             let newItem = {
                 itemHeader: this.newItemHeader,
                 itemId: '99',

@@ -1,34 +1,37 @@
 <template>
   <div class="app">
-    <div class="row">
-      <TodoList
-        class="col"
-        v-for="list in lists"
-        v-bind:key="list.listId"
-        v-bind:listId="list.listId"
-      />
-    </div>
-    <ControlPanel/>
-
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import TodoList from './components/TodoList.vue'
-import ControlPanel from './components/ContorlPanel'
+    const axios = require('axios').default;
 
+const serverUrl = 'localhost:8081';
 
+const urlConfig = {
+    'lists' : '/l',
+    'items' : '/i'
+}
+  
 export default {
   name: 'App',
   components: {
-    TodoList,
-    ControlPanel
   },
   data() {
     return{
-      lists: [
-        {listId: 0}
-      ]
+    }
+  },
+  created: function(){
+    getAllLists()
+  },
+  methods: {
+    getAllLists: function() {
+        return new Promise ((resolve, reject) => {
+            axios.get(serverUrl + urlConfig['lists'])
+            .then(response => resolve(response))
+            .catch(error => reject(error))
+        });
     }
   }
 }
