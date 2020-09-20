@@ -5,14 +5,6 @@
 </template>
 
 <script>
-    const axios = require('axios').default;
-
-const serverUrl = 'localhost:8081';
-
-const urlConfig = {
-    'lists' : '/l',
-    'items' : '/i'
-}
   
 export default {
   name: 'App',
@@ -23,16 +15,9 @@ export default {
     }
   },
   created: function(){
-    getAllLists()
   },
   methods: {
-    getAllLists: function() {
-        return new Promise ((resolve, reject) => {
-            axios.get(serverUrl + urlConfig['lists'])
-            .then(response => resolve(response))
-            .catch(error => reject(error))
-        });
-    }
+
   }
 }
 </script>

@@ -2,10 +2,11 @@
     <div 
         class='TodoItem card m-2 w-50'>
         <p 
-            v-bind:class="{checked:this.completed}"
+            v-bind:class="{checked:this.itemCompleted}"
             class="m-2"> 
             <input 
-                type="checkbox" 
+                type="checkbox"
+                v-model="this.itemCompleted"
                 v-on:change="check">
             {{itemHeader}}
             <!-- Labels -->
@@ -32,24 +33,27 @@
 </template>
 
 <script>
+import {deleteItem} from '../components/HTTPWrapper'
+
 export default {
     name: 'TodoItem',
     props: {
-        itemId:String,
+        itemId:Number,
         itemHeader:String,
         itemDescription: String,
         itemPriority: Object,
         itemLabel: Array[String],
-        completed: Boolean,
+        itemCompleted: Boolean,
     },
     methods: {
         removeItem() {  //  Send Delete Request To Delete Item
-            console.log(`list ${this.$parent.listId} item ${this.itemId}`)
+            console.log(this.$parent);
+            deleteItem(this.$parent.id, this.itemId);
             this.$emit('remove', this.itemId);
         },
         check() {   //  Send Put Request To Update Data
-            this.completed = !this.completed;
-            console.log(`checked ${this.completed}`)
+            this.itemCompleted = !this.itemCompleted;
+            // console.log(`checked ${this.itemCompleted}`)
         }
     }
 }

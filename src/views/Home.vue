@@ -17,32 +17,26 @@
 
 <script>
 import ListBadge from '../components/ListBadge'
-import {getAllLists} from '../services/HTTP'
+import {getAllLists} from '../components/HTTPWrapper'
 
 export default {
   name: 'Home',
   mounted: function() {
-    getAllLists
+    getAllLists()
+    .then(resp => {
+      this.lists = resp['data'];
+    })
   },
   components: {
-    // TodoList,
     ListBadge
   },
   data() {
     return{
-      lists: [
-        {listId: -1, listHeader: 'Home'},
-        {listId: 1, listHeader: 'Groceries'},
-        {listId: 2, listHeader: 'Valeo'},
-        {listId: 3, listHeader: 'Personal'}
-      ]
+      lists: []
     }
   },
   methods: {
-    getList(listId) {   //  Get the chosen list data
-      
-      console.log('list ' + listId);
-    }
+    
   }
 }
 </script>

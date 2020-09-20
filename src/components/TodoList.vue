@@ -34,9 +34,9 @@ export default {
     data() {
         return{
             items : [
-                { itemHeader: 'Do smth0', itemId: '0', itemPriority: {btnType: 'info', btnText: 'Low'}, itemDescription:'No description for this item.', itemLabel:'#ff4b5c', completed:false},
-                { itemHeader: 'Do smth1', itemId: '1', itemPriority: {btnType: 'warning', btnText: 'Medium'}, itemDescription:'No description for this item.', itemLabel:'#ff8e6e', completed:false},
-                { itemHeader: 'Do smth2', itemId: '2', itemPriority: {btnType: 'danger', btnText: 'High'}, itemDescription:'No description for this item.', itemLabel:'#515070', completed:false},
+                // { itemHeader: 'Do smth0', itemId: '0', itemPriority: {btnType: 'info', btnText: 'Low'}, itemDescription:'No description for this item.', itemLabel:'#ff4b5c', completed:false},
+                // { itemHeader: 'Do smth1', itemId: '1', itemPriority: {btnType: 'warning', btnText: 'Medium'}, itemDescription:'No description for this item.', itemLabel:'#ff8e6e', completed:false},
+                // { itemHeader: 'Do smth2', itemId: '2', itemPriority: {btnType: 'danger', btnText: 'High'}, itemDescription:'No description for this item.', itemLabel:'#515070', completed:false},
             ]  
         }
     },
