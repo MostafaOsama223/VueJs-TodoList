@@ -1,15 +1,15 @@
 <template>
     <div class="Home">
         <div class="row">
-          <router-link
-            :to="`/l/${list.listId}`"
-            v-for="list in lists"
-            v-bind:key="list.listId">
-            <ListBadge
-              class="Badge"
-              v-bind:listHeader="list.listHeader"
-              v-on:click.native="getList(list.listId)"/>
-          </router-link>
+          <ListBadge
+            class="Badge"
+            v-for="list in this.lists"
+            v-bind:key="list.listId"
+            v-bind:listHeader="list.listHeader"
+            v-bind:listId="list.listId"
+            :itemsCount="list.items.length"
+            v-on:refresh-listBadges="getAllLists"
+            />
 
         </div>
     </div>
@@ -36,7 +36,12 @@ export default {
     }
   },
   methods: {
-    
+    getAllLists(){
+      getAllLists()
+      .then(resp => {
+        this.lists = resp['data'];
+      })
+    }
   }
 }
 </script>
@@ -44,13 +49,5 @@ export default {
 <style scoped>
 .Badge:hover, .Badge{
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
-}
-
-a {
-  color: #333;
 }
 </style>

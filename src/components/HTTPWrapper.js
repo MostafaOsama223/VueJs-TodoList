@@ -45,18 +45,42 @@ export function getList(listId){
 
 export function deleteItem(listId, itemId){
     return new Promise((resolve, reject) => {
-        axios.delete(`/l/${listId}/i/${itemId}`,{
+        instance.request({
+            url: urlConfig['lists'] + `/${listId}` + urlConfig['items'] + `/${itemId}`,
+            method: 'delete',
             headers: {
-                        'Access-Control-Allow-Origin': '*'
-                    }
+                'Access-Control-Allow-Origin': '*'
+            }
         })
-        // instance.request({
-        //     url: urlConfig['lists'] + `/${listId}` + urlConfig['items'] + `/${itemId}`,
-        //     method: '',
-        //     headers: {
-        //         'Access-Control-Allow-Origin': '*'
-        //     }
-        // })
+        .then(response => resolve(response))
+        .catch(error => reject(error))
+    }); 
+}
+
+export function addItem(listId, item){
+    return new Promise((resolve, reject) => {
+        instance.request({
+            url: urlConfig['lists'] + `/${listId}` + urlConfig['items'],
+            method: 'post',
+            data: item,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        })
+        .then(response => resolve(response))
+        .catch(error => reject(error))
+    }); 
+}
+
+export function deleteList(listId){
+    return new Promise((resolve, reject) => {
+        instance.request({
+            url: urlConfig['lists'] + `/${listId}`,
+            method: 'delete',
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        })
         .then(response => resolve(response))
         .catch(error => reject(error))
     }); 

@@ -1,21 +1,43 @@
 <template>
 <div class="d-flex flex-row">
-    <b-card
+    <router-link
+        :to="`/l/${listId}`">
+        <b-card
         class="ListBadge"
         v-bind:title="listHeader">
         <b-badge
             class="itemsBadge">
-            AA</b-badge>
-    </b-card>
+        {{itemsCount}}</b-badge>
+        </b-card>
+    </router-link>
+    
+    <button
+            class="btn btn-danger w-25 h-25 deleteListBtn"
+            v-on:click="deleteList">
+    X</button>
 </div>
 
 </template>
 
 <script>
+import {deleteList} from '../components/HTTPWrapper'
+
 export default {
     name: "ListBadge",
     props: {
-        listHeader: String
+        listHeader: String,
+        listId: Number,
+        itemsCount: Number
+    },
+    data(){
+        return {
+        }
+    },
+    methods:{
+        deleteList(){
+            deleteList(this.listId)
+            .then(this.$emit('refresh-listBadges'))
+        }
     }
 }
 </script>
@@ -37,7 +59,23 @@ export default {
 
     .itemsBadge{
         position: relative;
-        left: 95%;
-        top: 1.4em;
+        left: 23.55em;
+        top: 1.85em;
+    }
+
+    .deleteListBtn{
+        position: relative;
+        right: 2.72em;
+        top: .5em;
+        padding-top: 0em;
+        padding-bottom: 0em;
+    }
+
+    a:hover {
+        text-decoration: none;
+    }
+
+    a {
+        color: #333;
     }
 </style>

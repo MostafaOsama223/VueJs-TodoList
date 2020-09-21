@@ -3,12 +3,12 @@
     <TodoItem 
         class="ml-4"
         v-for="item in items"
-        v-bind:key="item.itemId"
-        v-bind:itemHeader="item.itemHeader"
-        v-bind:itemId="item.itemId"
-        v-bind:itemLabel="item.itemLabel"
-        v-bind:itemPriority="item.itemPriority"
-        v-bind:completed="item.completed"
+        :key="item.itemId"
+        :itemHeader="item.itemHeader"
+        :itemId="item.itemId"
+        :itemLabel="item.itemLabel"
+        :itemPriority="item.itemPriority"
+        :completed="item.completed"
         v-on:remove="removeItem"
     />
     <b-button 
@@ -26,6 +26,9 @@ import AddItemModal from './AddItemModal'
 
 export default {
     name: 'TodoList',
+    mounted: function(){
+        console.log(this.items)
+    },
     components: {
         TodoItem,
         AddItemModal
@@ -33,11 +36,7 @@ export default {
     props: ['listId'],
     data() {
         return{
-            items : [
-                // { itemHeader: 'Do smth0', itemId: '0', itemPriority: {btnType: 'info', btnText: 'Low'}, itemDescription:'No description for this item.', itemLabel:'#ff4b5c', completed:false},
-                // { itemHeader: 'Do smth1', itemId: '1', itemPriority: {btnType: 'warning', btnText: 'Medium'}, itemDescription:'No description for this item.', itemLabel:'#ff8e6e', completed:false},
-                // { itemHeader: 'Do smth2', itemId: '2', itemPriority: {btnType: 'danger', btnText: 'High'}, itemDescription:'No description for this item.', itemLabel:'#515070', completed:false},
-            ]  
+            items : []  
         }
     },
     methods: {

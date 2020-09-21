@@ -14,7 +14,7 @@ const routes = [
         component: Home
     },
     {
-        path: '/l/:id',
+        path: '/l/:listId',
         name: "List",
         component: List,
         props: true

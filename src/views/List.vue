@@ -2,14 +2,14 @@
         
 
     <div class="p-2 m-3 d-flex flex-column justify-content-center">
-      <p>This is list {{id}}</p>
+      <p>This is list {{$route.params.listId}}</p>
     <todo-item
         class="ml-4"
         v-for="item in items"
         v-bind:key="item.itemId"
         v-bind:itemHeader="item.itemHeader"
         v-bind:itemId="item.itemId"
-        v-bind:itemLabel="item.itemLabel[0]"
+        v-bind:itemLabel="item.itemLabel"
         v-bind:itemPriority="item.itemPriority"
         v-bind:itemCompleted="item.itemCompleted"
         v-on:remove="removeItem"
@@ -29,7 +29,8 @@
       </router-link>      
     </div>
 
-    <add-item-modal/>
+    <add-item-modal
+      v-on:addItem="addItem($event)"/>
 
     </div>
 </template>
@@ -38,6 +39,7 @@
 import TodoItem from '../components/TodoItem'
 import AddItemModal from '../components/AddItemModal'
 import {getList} from '../components/HTTPWrapper'
+
 export default {
   name: 'List',
   components: {
@@ -45,7 +47,7 @@ export default {
         AddItemModal
   },
   props: {
-    id: {
+    listId: {
       type: String,
       validator: function(value) { 
         return Number(value) > 0
@@ -53,30 +55,25 @@ export default {
     },
   },
   mounted: function(){
-    getList(this.id)
+    getList(this.listId)
     .then(resp => this.items = resp.data.items)
     
   },
   data: function(){
      return {
-       items : [
-                // { itemHeader: 'Do smth0', itemId: '0', itemPriority: {btnType: 'info', btnText: 'Low'}, itemDescription:'No description for this item.', itemLabel:'#ff4b5c', completed:false},
-                // { itemHeader: 'Do smth1', itemId: '1', itemPriority: {btnType: 'warning', btnText: 'Medium'}, itemDescription:'No description for this item.', itemLabel:'#ff8e6e', completed:false},
-                // { itemHeader: 'Do smth2', itemId: '2', itemPriority: {btnType: 'danger', btnText: 'High'}, itemDescription:'No description for this item.', itemLabel:'#515070', completed:false},
-            ]
+       items : []
      }
   },
   created: function() {
           console.log('Send http request to get list data');
       },
   methods: {
-        removeItem(id) {
-            this.items = this.items.filter((val) =>  val.itemId !== id);
+        removeItem(listId) {
+            this.items = this.items.filter((val) =>  val.itemId !== listId);
             console.log(this.items);
         },
-        addItem: function(newItem){
-            this.items.push(newItem);
-            console.log(newItem)
+        addItem: function($event){
+            this.items = $event.items;
         },
         backToHome: function(){
             console.log('x')

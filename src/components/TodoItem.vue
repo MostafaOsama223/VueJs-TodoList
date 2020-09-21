@@ -7,22 +7,26 @@
             <input 
                 type="checkbox"
                 v-model="this.itemCompleted"
-                v-on:change="check">
+                v-on:change="check"/>
             {{itemHeader}}
+            
             <!-- Labels -->
             <b-button   
                 class="m-1 labels"
                 type="button"
-                v-bind:style="`background-color: ${itemLabel};`"
+                v-for="label in itemLabels"
+                :key="label"
+                v-bind:style="`background-color: ${label};`"
                 style="cursor:unset;">
             </b-button>
+
             <!-- Priority -->
             <button
                 class="btn p-0"
                 type="button"
-                v-bind:class= "`btn-${itemPriority.btnType}`"
-                style="width: 6em; font-size: 10px; cursor:unset; position:relative;">
-                {{itemPriority.btnText}}
+                v-bind:class= "`priorityBtn-${itemPriority}`"
+                style="width: 6em; font-size: 10px; cursor:unset; position:relative; color:#f1f3f8">
+                {{itemPriority}}
             </button>
         </p>
         <button
@@ -37,13 +41,21 @@ import {deleteItem} from '../components/HTTPWrapper'
 
 export default {
     name: 'TodoItem',
+    mounted: function (){
+        console.log(this.itemLabel)
+    },
     props: {
         itemId:Number,
         itemHeader:String,
         itemDescription: String,
-        itemPriority: Object,
-        itemLabel: Array[String],
+        itemPriority: String,
+        itemLabel: Array,
         itemCompleted: Boolean,
+    },
+    data() {
+        return {
+            itemLabels : this.itemLabel
+        }
     },
     methods: {
         removeItem() {  //  Send Delete Request To Delete Item
@@ -80,6 +92,17 @@ export default {
         /* width: 75%; */
     }
 
+    .priorityBtn-High{
+        background-color: #cd0a0a;
+    }
+
+    .priorityBtn-Medium{
+        background-color: #ffc93c;
+    }
+
+    .priorityBtn-Low{
+        background-color: #4e89ae;
+    }
 /* rabbit mq
 tasks ?
 // REST API
