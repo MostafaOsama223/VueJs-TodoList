@@ -29,8 +29,8 @@
             </tbody>
         </table>
         <calendar-date-display
-            :selectedStartDate="selectedStartDate"
-            :selectedEndDate="selectedEndDate"/>
+            :selectedStartDate="startDateToDisplay"
+            :selectedEndDate="endDateToDisplay"/>
     </div>
 </template>
 
@@ -60,7 +60,9 @@ export default {
             endMonthDaysNumbers: [],
             dayNames: ['Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             selectedStartDate: null,
-            selectedEndDate: null
+            selectedEndDate: null,
+            startDateToDisplay: null,
+            endDateToDisplay: null
         }
     },
     methods:{
@@ -96,15 +98,18 @@ export default {
         selectDate(selectedDate){
             selectedDate = moment(selectedDate, 'D-MMMM-YYYY');
             console.log(selectedDate.diff(this.selectedStartDate, 'days'))
-            if(this.selectedStartDate === null && this.selectedEndDate === null) this.selectedStartDate = selectedDate.format('ddd, MMM D');
-            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) > 0) this.selectedEndDate = selectedDate.format('ddd, MMM D');
-            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) < 0) this.selectedStartDate = selectedDate.format('ddd, MMM D');
+            if(this.selectedStartDate === null && this.selectedEndDate === null) this.selectedStartDate = selectedDate;
+            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) > 0) this.selectedEndDate = selectedDate;
+            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) < 0) this.selectedStartDate = selectedDate;
             else if(this.selectedStartDate !== null && this.selectedEndDate !== null){
-                this.selectedStartDate = selectedDate.format('ddd, MMM D');
+                this.selectedStartDate = selectedDate;
                 this.selectedEndDate = null;
             }
-            else    this.selectedEndDate = selectedDate.format('ddd, MMM D');
-            
+            else    this.selectedEndDate = selectedDate;
+            if(this.selectedStartDate != null) this.startDateToDisplay = this.selectedStartDate.format('ddd, MMM DD');
+            else this.startDateToDisplay = null;
+            if(this.selectedEndDate != null) this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
+            else this.endDateToDisplay = null;
             console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
 
         }
