@@ -4,8 +4,7 @@ import VueRouter from "vue-router"
 /*  Views   */
 import Home from "../views/Home.vue"
 import List from "../views/List.vue"
-import ViasTest from "../views/ViasTest.vue"
-
+import ViasTest from '../views/ViasTest.vue'
 Vue.use(VueRouter);
 
 const routes = [
@@ -21,8 +20,8 @@ const routes = [
         props: true
     },
     {
-        path: '/vias',
-        name: "ViasTest",
+        path: '/x',
+        name: "VisaTest",
         component: ViasTest,
         props: true
     }
