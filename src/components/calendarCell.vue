@@ -2,7 +2,8 @@
     <div class="calendar-cell"> 
         <b-button
             class="h-100 w-100 clickable-cell"
-            v-on:click="$emit('select-date', displayData)">
+            v-on:click="$emit('select-date', displayData)"
+            v-bind:class="{selected: isSelected}">
             <span>{{displayData}}</span>
         </b-button>
     </div>
@@ -12,7 +13,32 @@
 export default {
     name: "calendar-cell",
     props:{
-        displayData: String
+        displayData: String,
+        startDateToDisplay: String,
+        endDateToDisplay: String,
+        index: Number
+    },
+    data(){
+        return{
+            isSelected: false
+        }
+    },
+    watch:{
+        startDateToDisplay: function(val){
+            // console.log(Number(val.split(' ')[2]))
+            console.log('this.displayData')
+            if(val == null && this.endDateToDisplay == null){
+                this.isSelected = false;
+                return;
+            } 
+            if(Number(val.split(' ')[2]) == this.displayData && this.endDateToDisplay == null)    this.isSelected = true;
+            else if(this.endDateToDisplay != null) this.isSelected = true;
+            else this.isSelected = false;
+        },
+        endDateToDisplay: function(val){
+            if(val == null) return;
+            if(val.split(' ')[2] == this.displayData)    this.isSelected = true;
+        }
     }
 }
 </script>
@@ -31,5 +57,9 @@ export default {
         border-radius: 0;
         padding: 0;
         border: 0em;
+    }
+
+    .selected{
+        background-color: #666;
     }
 </style>

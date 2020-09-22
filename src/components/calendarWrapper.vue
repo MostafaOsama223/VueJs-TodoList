@@ -21,10 +21,14 @@
                 <calendar-body
                     :days="startMonthDaysNumbers"
                     :date="startDate.format('MMMM YYYY')"
+                    :startDateToDisplay="startDateToDisplay"
+                    :endDateToDisplay="endDateToDisplay"
                     v-on:select-date="selectDate"/>
                 <calendar-body
                     :days="endMonthDaysNumbers"
                     :date="endDate.format('MMMM YYYY')"
+                    :startDateToDisplay="startDateToDisplay"
+                    :endDateToDisplay="endDateToDisplay"
                     v-on:select-date="selectDate"/>
             </tbody>
         </table>
@@ -97,7 +101,7 @@ export default {
         },
         selectDate(selectedDate){
             selectedDate = moment(selectedDate, 'D-MMMM-YYYY');
-            console.log(selectedDate.diff(this.selectedStartDate, 'days'))
+            // console.log(selectedDate.diff(this.selectedStartDate, 'days'))
             if(this.selectedStartDate === null && this.selectedEndDate === null) this.selectedStartDate = selectedDate;
             else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) > 0) this.selectedEndDate = selectedDate;
             else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) < 0) this.selectedStartDate = selectedDate;
@@ -110,7 +114,7 @@ export default {
             else this.startDateToDisplay = null;
             if(this.selectedEndDate != null) this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
             else this.endDateToDisplay = null;
-            console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
+            // console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
 
         }
     }

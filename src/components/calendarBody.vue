@@ -4,7 +4,9 @@
             v-for="(day, index) in days"
             :key="index"
             :displayData="day"
-            v-on:select-date="selectDate"/>
+            v-on:select-date="selectDate"
+            :startDateToDisplay="bindStartDate ? startDateToDisplay : null"
+            :endDateToDisplay="bindEndDate ? endDateToDisplay : null"/>
     </div>
 </template>
 
@@ -18,20 +20,34 @@ export default {
         calendarCell
     },
     data() {
+
         return{
+            bindStartDate: Boolean,
+            bindEndDate: Boolean
             
         }
     },
     props:{
         days: Array,
-        date: String
+        date: String,
+        startDateToDisplay: String,
+        endDateToDisplay: String
     },
     methods:{
         selectDate(selectedDayNumber){
             let selectedDate = moment(`${selectedDayNumber} ${this.date}`);
-            // let selectedDate = selectedDayNumber + ' ' + this.date;
+            // console.log(`${selectedDayNumber} ${this.date}`)
+            
             this.$emit('select-date', selectedDate);
         }
+    },
+    watch:{
+        startDateToDisplay: function(v){
+            if(v != null)   this.bindStartDate = this.date.substring(0,3) == v.split(' ')[1];
+        },
+        endDateToDisplay: function(v){
+            if(v != null)   this.bindEndDate = this.date.substring(0,3) == v.split(' ')[1];
+        },
     }
 }
 </script>
