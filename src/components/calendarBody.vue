@@ -8,7 +8,8 @@
             :selectedStartDate="selectedStartDate"
             :selectedEndDate="selectedEndDate"
             :month_year="month_year"
-            v-on:omit-calendar="$emit('omit-calendar')"/>
+            v-on:omit-calendar="$emit('omit-calendar')"
+            :omitPreviousDays="omitPreviousDays"/>
     </div>
 </template>
 
@@ -34,7 +35,8 @@ export default {
         days: Array,    //  Array of days numbers [1,2,3,4,..]
         month_year: String,   //  Date of current calendar "Oct"
         selectedStartDate: String,
-        selectedEndDate: String
+        selectedEndDate: String,
+        omitPreviousDays: Boolean
     },
     methods:{
         selectDate(selectedDate){

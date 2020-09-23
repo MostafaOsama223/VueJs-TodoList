@@ -3,14 +3,15 @@
         <table>
             <thead>
                 <calendar-head
-                    :monthName="startDate.format('MMMM YYYY')"
+                    :month_year="startDate.format('MMMM YYYY')"
                     :leftArrow="true"
                     :rightArrow="false"
                     :dayNames="dayNames"
-                    v-on:prev-month="prevMonth"/>
+                    v-on:prev-month="prevMonth"
+                    :omitPreviousDays="omitPreviousDays"/>
                 
                 <calendar-head
-                    :monthName="endDate.format('MMMM YYYY')"
+                    :month_year="endDate.format('MMMM YYYY')"
                     :leftArrow="false"
                     :rightArrow="true"
                     :dayNames="dayNames"
@@ -24,7 +25,8 @@
                     :selectedStartDate="startDateToDisplay"
                     :selectedEndDate="endDateToDisplay"
                     v-on:select-date="selectDate"
-                    v-on:omit-calendar="$emit('omit-calendar')"/>
+                    v-on:omit-calendar="omitCalendar"
+                    :omitPreviousDays="omitPreviousDays"/>
                 <calendar-body
                     :days="endMonthDaysNumbers"
                     :month_year="endDate.format('MMM YYYY')"
@@ -38,6 +40,8 @@
         <calendar-date-display
             :selectedStartDate="startDateToDisplay"
             :selectedEndDate="endDateToDisplay"/>
+                  <b-button
+        v-on:click="omitCalendar">omit calendar</b-button>
     </div>
 </template>
 
@@ -45,12 +49,11 @@
 import calendarBody from './calendarBody.vue'
 import calendarHead from './calendarHead.vue'
 import calendarDateDisplay from './calendarDateDisplay.vue'
-
 import moment from 'moment'
 
 export default {
     name: "calendar-wrapper",
-    mounted:function(){
+    created:function(){
         this.startMonthDaysNumbers = this.getMonthDays(moment());
         this.endMonthDaysNumbers = this.getMonthDays(moment().add(1,"month"));
         this.startDateToDisplay = this.selectedStartDate.format('ddd, MMM DD');
@@ -58,7 +61,11 @@ export default {
     },
     props:{
         selectedStartDate: moment(),
-        selectedEndDate: moment().add(1,'day')
+        selectedEndDate: null,
+        omitPreviousDays: {
+            default: false,
+            type: Boolean
+        }
     },
     components:{
         calendarBody,
@@ -71,9 +78,12 @@ export default {
             endDate: moment().add(1,"month"),
             startMonthDaysNumbers: [],
             endMonthDaysNumbers: [],
+            disabledDays:[],
             dayNames: ['Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             startDateToDisplay: null,
-            endDateToDisplay: null
+            endDateToDisplay: null,
+            selectedStartDateCopy: this.selectedStartDate,
+            selectedEndDateCopy: this.selectedEndDate
         }
     },
     methods:{
@@ -83,13 +93,14 @@ export default {
             let daysNumbers = [];
 
             while(startDay > 0){
-                daysNumbers.push('');
+                daysNumbers.push(' ');
                 startDay --;
             }
             while(startDay != endDay){
                 startDay++;
                 daysNumbers.push(String(startDay));
             }
+            
             return daysNumbers;
         },
         startDay(currentDate){
@@ -109,24 +120,22 @@ export default {
         selectDate(selectedDate){
             selectedDate = moment(selectedDate, 'D-MMMM-YYYY');
             
-            if(this.selectedStartDate === null && this.selectedEndDate === null) this.selectedStartDate = selectedDate;
-            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) > 0) this.selectedEndDate = selectedDate;
-            else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) < 0) this.selectedStartDate = selectedDate;
-            else if(this.selectedStartDate !== null && this.selectedEndDate !== null){
-                this.selectedStartDate = selectedDate;
-                this.selectedEndDate = null;
+            if(this.selectedStartDateCopy === null && this.selectedEndDateCopy === null) this.selectedStartDateCopy = selectedDate;
+            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy === null && selectedDate.diff(moment(this.selectedStartDateCopy)) > 0) this.selectedEndDateCopy = selectedDate;
+            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy === null && selectedDate.diff(moment(this.selectedStartDateCopy)) < 0) this.selectedStartDateCopy = selectedDate;
+            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy !== null){
+                this.selectedStartDateCopy = selectedDate;
+                this.selectedEndDateCopy = null;
             }
-            else    this.selectedEndDate = selectedDate;
-            if(this.selectedStartDate != null) this.startDateToDisplay = this.selectedStartDate.format('ddd, MMM DD');
+            else    this.selectedEndDateCopy = selectedDate;
+            if(this.selectedStartDateCopy != null) this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD');
             else this.startDateToDisplay = null;
-            if(this.selectedEndDate != null) this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
+            if(this.selectedEndDateCopy != null) this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD');
             else this.endDateToDisplay = null;
-            console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
-
+            console.log(`start ${this.selectedStartDateCopy} end ${this.selectedEndDateCopy}`);
         },
         omitCalendar(){
-
-            this.$emit('omit-calendar');
+            this.$emit('omit-calendar', this.selectedStartDateCopy, this.selectedEndDateCopy);
         }
     }
 }

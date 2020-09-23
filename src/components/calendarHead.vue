@@ -4,17 +4,23 @@
                 id="prevMonthBtn" 
                 v-if="leftArrow"
                 v-on:click="$emit('prev-month')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg></b-button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path>
+            </svg>
+        </b-button>
 
         <p class="monthName">
-            {{monthName}}   
+            {{month_year}}   
         </p>
         
         <b-button 
                 id="nextMonthBtn" 
                 v-if="rightArrow"
                 v-on:click="$emit('next-month')">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></b-button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+            </svg>
+        </b-button>
 
         <div class="dayNamesHeader">
             <calendar-cell
@@ -28,7 +34,6 @@
 
 <script>
 import calendarCell from './calendarCell.vue'
-
 export default {
     name: "calendarHead",
     components:{
@@ -40,7 +45,7 @@ export default {
         }
     },
     props:{
-        monthName: String,
+        month_year: String,
         leftArrow: Boolean,
         rightArrow: Boolean,
         dayNames: Array
@@ -58,17 +63,14 @@ export default {
         text-align: center;
         background-color: #FFF;
     }
-
     .dayNamesHeader{
         padding: .5em;
         width: 15em;
         height: 3em;
     }
-
     .monthName{
         margin: 0;
     }
-
     #nextMonthBtn{
         padding: 0;
         /* margin: 0em 0em 0em 5em; */
@@ -78,11 +80,9 @@ export default {
         background-color:transparent;
         border: none;
     }
-
     p{
         display: inline-block;
     }
-
     #prevMonthBtn{
         padding: 0;
         float: left;

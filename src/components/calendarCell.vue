@@ -3,7 +3,7 @@
         <button
             class="h-100 w-100 clickable-cell"
             v-on:click="selectDate"
-            v-bind:class="{selected: isSelected}">
+            v-bind:class="{selected: isSelected, disabled: isDisabled }">
             <span>{{displayData}}</span>
         </button>
     </div>
@@ -11,7 +11,6 @@
 
 <script>
 import moment from 'moment'
-
 export default {
     name: "calendar-cell",
     props:{
@@ -19,7 +18,8 @@ export default {
         selectedStartDate: String,
         selectedEndDate: String,
         index: Number,
-        month_year: String
+        month_year: String,
+        omitPreviousDays: Boolean
     },
     methods:{
         selectDate(){
@@ -28,10 +28,12 @@ export default {
     },
     data(){
         return{
-            isSelected: false
+            isSelected: false,
+            isDisabled: false
         }
     },
     created: function(){
+        
         if(this.month_year != undefined && this.month_year != null) var currCalendarMonth = this.month_year.split(' ')[0];
         
         if(this.selectedStartDate != null && this.selectedStartDate != undefined){  
@@ -44,31 +46,32 @@ export default {
                 this.isSelected = false;
             }
         }
-
         if(this.selectedEndDate != null && this.selectedEndDate != undefined){  
             var selectedEndMonth = this.selectedEndDate.split(' ')[1];
             var selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
-
             if(this.selectedEndDate != null && selectedEndDayNumber == this.displayData && selectedEndMonth == currCalendarMonth){
                 this.isSelected = true;
             }else if(selectedStartDayNumber != this.displayData && selectedEndMonth == currCalendarMonth){
                 this.isSelected = false;
             }
-        }        
+        }
+        
+        if(
+            (this.omitPreviousDays && Number(this.displayData) < Number(moment().format('DD')) &&
+            currCalendarMonth == moment().format('MMM')) || this.displayData == ' ')  this.isDisabled = true;
     },
     watch:{
         month_year: function(month_year){
+            
             const currCalendarMonth = month_year.split(' ')[0];
             const selectedStartMonth = this.selectedStartDate.split(' ')[1];
             const selectedStartDayNumber = Number(this.selectedStartDate.split(' ')[2]);
-
             let selectedEndDayNumber = null;
+            console.log('currCalendarMonth ' + currCalendarMonth + ' currMonth ' + moment().format('MMM'))
             if(this.selectedEndDate != null){ 
                 selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
                 var selectedEndMonth = this.selectedEndDate.split(' ')[1];
             }
-
-            // console.log(`selectedEndDate ${this.selectedEndDate} selectedEndDayNumber ${selectedEndDayNumber} selectedEndMonth ${selectedEndMonth} currCalendarMonth ${currCalendarMonth}`);
 
             if(
                 (this.selectedStartDate != null && selectedStartDayNumber == this.displayData && selectedStartMonth == currCalendarMonth) ||
@@ -78,15 +81,14 @@ export default {
             }else{
                 this.isSelected = false;
             }
-
+            if( this.omitPreviousDays && Number(this.displayData) < Number(moment().format('DD')) && currCalendarMonth == moment().format('MMM')) this.isDisabled = true;
+            else    this.isDisabled = false;
         },
         selectedStartDate: function(selectedStartDate){
             const currCalendarMonth = this.month_year.split(' ')[0];
             const selectedMonth = selectedStartDate.split(' ')[1];
             const selectedDayNumber = Number(selectedStartDate.split(' ')[2]);
-
             // console.log(`selectedStartDate ${selectedStartDate} month_year ${this.month_year}`);
-
             if(selectedStartDate != null && selectedMonth != currCalendarMonth){
                 this.isSelected = false;
                 return;
@@ -126,7 +128,6 @@ export default {
         height: 2em;
         float: left;
     }
-
     .clickable-cell{
         background-color: transparent;
         color: #333;
@@ -135,15 +136,18 @@ export default {
         border: 0em;
         outline: none;
     }
-
     .clickable-cell:hover{
         background-color: #DDD;
         color: #333;
         border: 0em;
     }
-
     .selected, .clickable-cell:active{
         background-color: #ADB;
         
+    }
+    .disabled{
+        color: #999;
+        cursor: not-allowed;
+        pointer-events: none;
     }
 </style>
