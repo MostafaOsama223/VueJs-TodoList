@@ -16,6 +16,8 @@ export default {
 
 <style scoped>
     .calendar-date-display{
-        background-color: #EEE;
+        background-color: #FFF;
+        text-align: center;
+        font-size: .9em;
     }
 </style>

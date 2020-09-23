@@ -1,117 +1,95 @@
 <template>
-  <div class="ViasTest">
-    <calendar-wrapper>
-      
-    </calendar-wrapper>
-  </div>
+    <div class="calendar-head">
+        <b-button 
+                id="prevMonthBtn" 
+                v-if="leftArrow"
+                v-on:click="$emit('prev-month')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg></b-button>
+
+        <p class="monthName">
+            {{monthName}}   
+        </p>
+        
+        <b-button 
+                id="nextMonthBtn" 
+                v-if="rightArrow"
+                v-on:click="$emit('next-month')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></b-button>
+
+        <div class="dayNamesHeader">
+            <calendar-cell
+                v-for="dayName in dayNames"
+                :key="dayName"
+                :displayData="dayName"/>           
+        </div>
+
+    </div>
 </template>
 
 <script>
-// import moment from "moment";
-import calendarWrapper from '../components/calendarWrapper.vue'
+import calendarCell from './calendarCell.vue'
 
 export default {
-  name: "ViasTest",
-  components: { calendarWrapper },
-  mixins: [],
-  props: {
-    
-  },
-  data() {
-    return {
-      selectedCell: {
-        item: null,
-        date: null,
-        data: null,
-      },
-    };
-  },
-  computed: {
-    
-  },
-  watch: {
-    
-  },
-  created() {},
-  methods: {
-  }  
-};
+    name: "calendarHead",
+    components:{
+        calendarCell
+    },
+    data() {
+        return{
+            
+        }
+    },
+    props:{
+        monthName: String,
+        leftArrow: Boolean,
+        rightArrow: Boolean,
+        dayNames: Array
+    },
+    methods:{
+        
+    }
+}
 </script>
 
 <style scoped>
-p {
-  margin-bottom: 0;
-}
-.calender-table {
-  border-collapse: collapse;
-  border-bottom-left-radius: 0.8rem;
-  border-bottom-right-radius: 0.8rem;
-}
-.calender-body {
-  width: 100%;
-  table-layout: fixed;
-}
-.calender-body > tbody {
-  background-color: white;
-}
-thead th {
-  padding: 0.5rem;
-  position: sticky;
-  top: 63.6px;
-  background-color: #e9f2f5;
-}
-thead th:nth-child(n + 2) {
-  text-align: center;
-}
-#calender-label {
-  width: 13rem;
-}
-thead th:not(#calender-label) {
-  width: calc((100% - 13rem) / 7);
-}
-.cell-content {
-  height: 3.8rem;
-  padding: 0.5rem;
-}
-thead th:not(:last-child),
-tbody td:not(:last-child) {
-  border-right: #c6c6c6 1px solid;
-}
-tbody tr:not(:last-child) td {
-  border-bottom: #c6c6c6 1px solid;
-}
-thead p {
-  font-weight: 400;
-}
-.holiday {
-  background-color: #f3f4f5;
-}
-.calender-days__number {
-  width: 1.6rem;
-  height: 1.6rem;
-  font-size: 14px;
-  border-radius: 50%;
-  text-align: center;
-  margin: 0 auto;
-  padding: 3px 0;
-}
-.calender-days__number.today {
-  background-color: #3596bc;
-  color: white;
-}
-.item-label {
-  font-size: 0.9rem;
-  color: #3596bc;
-}
-.calender-days__name {
-  font-size: 0.9rem;
-}
-.legend-content {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-}
-.legend-content img {
-  width: 0.8rem;
-}
+    .calendar-head{
+        position: relative;
+        display: inline-block;
+        text-align: center;
+        background-color: #FFF;
+    }
+
+    .dayNamesHeader{
+        padding: .5em;
+        width: 15em;
+        height: 3em;
+    }
+
+    .monthName{
+        margin: 0;
+    }
+
+    #nextMonthBtn{
+        padding: 0;
+        /* margin: 0em 0em 0em 5em; */
+        float: right;
+        width: 2em;
+        height: 2em;
+        background-color:transparent;
+        border: none;
+    }
+
+    p{
+        display: inline-block;
+    }
+
+    #prevMonthBtn{
+        padding: 0;
+        float: left;
+        width: 2em;
+        height: 2em;
+        background-color:transparent;
+        border: none;        
+        outline: none;
+    }
 </style>

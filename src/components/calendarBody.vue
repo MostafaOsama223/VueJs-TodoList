@@ -5,14 +5,16 @@
             :key="index"
             :displayData="day"
             v-on:select-date="selectDate"
-            :startDateToDisplay="bindStartDate ? startDateToDisplay : null"
-            :endDateToDisplay="bindEndDate ? endDateToDisplay : null"/>
+            :selectedStartDate="selectedStartDate"
+            :selectedEndDate="selectedEndDate"
+            :month_year="month_year"
+            v-on:omit-calendar="$emit('omit-calendar')"/>
     </div>
 </template>
 
 <script>
 import calendarCell from './calendarCell.vue'
-import moment from 'moment'
+// import moment from 'moment'
  
 export default {
     name: "calendarBody",
@@ -20,34 +22,36 @@ export default {
         calendarCell
     },
     data() {
-
         return{
             bindStartDate: Boolean,
             bindEndDate: Boolean
-            
         }
     },
+    mounted(){
+          
+    },
     props:{
-        days: Array,
-        date: String,
-        startDateToDisplay: String,
-        endDateToDisplay: String
+        days: Array,    //  Array of days numbers [1,2,3,4,..]
+        month_year: String,   //  Date of current calendar "Oct"
+        selectedStartDate: String,
+        selectedEndDate: String
     },
     methods:{
-        selectDate(selectedDayNumber){
-            let selectedDate = moment(`${selectedDayNumber} ${this.date}`);
-            // console.log(`${selectedDayNumber} ${this.date}`)
-            
+        selectDate(selectedDate){
+            //  Sun, Sep 16
             this.$emit('select-date', selectedDate);
         }
     },
     watch:{
-        startDateToDisplay: function(v){
-            if(v != null)   this.bindStartDate = this.date.substring(0,3) == v.split(' ')[1];
-        },
-        endDateToDisplay: function(v){
-            if(v != null)   this.bindEndDate = this.date.substring(0,3) == v.split(' ')[1];
-        },
+        // month_year: function(v){
+        //     console.log(v);
+        // },
+        // selectedStartDate: function(v){
+        //     console.log(v);  
+        // },
+        // selectedEndDate: function(v){
+        //     console.log(v);  
+        // }
     }
 }
 </script>
@@ -56,9 +60,9 @@ export default {
     .calendar-body{
         display: inline-block;
         text-align: center;
-        background-color: #777;
-        padding: .5em;
+        background-color:#FFF;
+        padding: 0em 0em 0em 0em;
         width: 15em;
-        height: 13em;
+        height: 12em;
     }
 </style>

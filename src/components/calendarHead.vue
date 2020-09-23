@@ -4,7 +4,7 @@
                 id="prevMonthBtn" 
                 v-if="leftArrow"
                 v-on:click="$emit('prev-month')">
-        &#8592;</b-button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg></b-button>
 
         <p class="monthName">
             {{monthName}}   
@@ -14,7 +14,7 @@
                 id="nextMonthBtn" 
                 v-if="rightArrow"
                 v-on:click="$emit('next-month')">
-        &#8594;</b-button>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></b-button>
 
         <div class="dayNamesHeader">
             <calendar-cell
@@ -46,6 +46,7 @@ export default {
         dayNames: Array
     },
     methods:{
+        
     }
 }
 </script>
@@ -55,7 +56,7 @@ export default {
         position: relative;
         display: inline-block;
         text-align: center;
-        background-color: #999;
+        background-color: #FFF;
     }
 
     .dayNamesHeader{
@@ -69,12 +70,13 @@ export default {
     }
 
     #nextMonthBtn{
-        position: fixed;
-        left: 29em;
-        display: inline-block;
         padding: 0;
+        /* margin: 0em 0em 0em 5em; */
+        float: right;
         width: 2em;
         height: 2em;
+        background-color:transparent;
+        border: none;
     }
 
     p{
@@ -82,11 +84,12 @@ export default {
     }
 
     #prevMonthBtn{
-        position: fixed;
-        left: 1em;
-        display: inline-block;
         padding: 0;
+        float: left;
         width: 2em;
         height: 2em;
+        background-color:transparent;
+        border: none;        
+        outline: none;
     }
 </style>

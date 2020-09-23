@@ -20,18 +20,21 @@
             <tbody>
                 <calendar-body
                     :days="startMonthDaysNumbers"
-                    :date="startDate.format('MMMM YYYY')"
-                    :startDateToDisplay="startDateToDisplay"
-                    :endDateToDisplay="endDateToDisplay"
-                    v-on:select-date="selectDate"/>
+                    :month_year="startDate.format('MMM YYYY')"
+                    :selectedStartDate="startDateToDisplay"
+                    :selectedEndDate="endDateToDisplay"
+                    v-on:select-date="selectDate"
+                    v-on:omit-calendar="$emit('omit-calendar')"/>
                 <calendar-body
                     :days="endMonthDaysNumbers"
-                    :date="endDate.format('MMMM YYYY')"
-                    :startDateToDisplay="startDateToDisplay"
-                    :endDateToDisplay="endDateToDisplay"
-                    v-on:select-date="selectDate"/>
+                    :month_year="endDate.format('MMM YYYY')"
+                    :selectedStartDate="startDateToDisplay"
+                    :selectedEndDate="endDateToDisplay" 
+                    v-on:select-date="selectDate"
+                    v-on:omit-calendar="omitCalendar"/>
             </tbody>
         </table>
+        <hr style="width:50%; margin: .25em 7.5em .25em 7.5em">
         <calendar-date-display
             :selectedStartDate="startDateToDisplay"
             :selectedEndDate="endDateToDisplay"/>
@@ -50,6 +53,12 @@ export default {
     mounted:function(){
         this.startMonthDaysNumbers = this.getMonthDays(moment());
         this.endMonthDaysNumbers = this.getMonthDays(moment().add(1,"month"));
+        this.startDateToDisplay = this.selectedStartDate.format('ddd, MMM DD');
+        this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
+    },
+    props:{
+        selectedStartDate: moment(),
+        selectedEndDate: moment().add(1,'day')
     },
     components:{
         calendarBody,
@@ -63,8 +72,6 @@ export default {
             startMonthDaysNumbers: [],
             endMonthDaysNumbers: [],
             dayNames: ['Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            selectedStartDate: null,
-            selectedEndDate: null,
             startDateToDisplay: null,
             endDateToDisplay: null
         }
@@ -101,7 +108,7 @@ export default {
         },
         selectDate(selectedDate){
             selectedDate = moment(selectedDate, 'D-MMMM-YYYY');
-            // console.log(selectedDate.diff(this.selectedStartDate, 'days'))
+            
             if(this.selectedStartDate === null && this.selectedEndDate === null) this.selectedStartDate = selectedDate;
             else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) > 0) this.selectedEndDate = selectedDate;
             else if(this.selectedStartDate !== null && this.selectedEndDate === null && selectedDate.diff(moment(this.selectedStartDate)) < 0) this.selectedStartDate = selectedDate;
@@ -114,8 +121,12 @@ export default {
             else this.startDateToDisplay = null;
             if(this.selectedEndDate != null) this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
             else this.endDateToDisplay = null;
-            // console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
+            console.log(`start ${this.selectedStartDate} end ${this.selectedEndDate}`);
 
+        },
+        omitCalendar(){
+
+            this.$emit('omit-calendar');
         }
     }
 }
@@ -124,11 +135,13 @@ export default {
 <style scoped>
     .calendar-wrapper{
         display: inline-block;
-        background-color: #333;
+        background-color: #FFF;
         padding: 1em;
-        /* width: 32em; */
-        /* height: 18em; */
+        box-shadow: 0em 0em .5em #CCC;
+        min-height: 21 !important;
+        min-width: 30;
+        position: absolute;
+        z-index: 10;
+        top: 3.75em;
     }
-
-    
 </style>
