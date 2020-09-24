@@ -15,8 +15,6 @@ export default {
     name: "calendar-cell",
     props:{
         displayData: String,
-        selectedStartDate: String,
-        selectedEndDate: String,
         index: Number,
         month_year: String,
         omitPreviousDays: Boolean
@@ -24,6 +22,79 @@ export default {
     methods:{
         selectDate(){
             this.$emit('select-date', moment(`${this.displayData} ${this.month_year}`));
+        },
+        disableCell(){
+            if(this.month_year != undefined && this.month_year != null){
+                const currCalendarMonth = this.month_year.split(' ')[0];
+                const currCalendarYear = this.month_year.split(' ')[1];
+                if(
+                    ( this.omitPreviousDays && Number(this.displayData) < Number(moment().format('DD')) &&
+                    currCalendarMonth == moment().format('MMM') && currCalendarYear == moment().format('YYYY') ) 
+                    || this.displayData == ' ' || Number(this.displayData) == NaN)  
+                    this.isDisabled = true;
+            else    this.isDisabled = false;
+            }else   return;
+        },
+        selectStartCell(){
+            if(this.month_year != undefined && this.month_year != null){
+                
+                var currCalendarMonth = this.month_year.split(' ')[0];
+                var currCalendarYear = this.month_year.split(' ')[1];
+            }else   this.isSelected = false;
+
+            if(this.selectedStartDate != undefined && this.selectedStartDate != null){ 
+                var selectedStartMonth = this.selectedStartDate.split(' ')[1];
+                var selectedStartYear = this.selectedStartDate.split(' ')[3];
+                var selectedStartDayNumber = Number(this.selectedStartDate.split(' ')[2]);
+                // console.log(this.selectedStartDate);
+                if(
+                    (selectedStartDayNumber == this.displayData   &&
+                    selectedStartMonth == currCalendarMonth       &&
+                    selectedStartYear == currCalendarYear)        ||
+                    (selectedStartDayNumber == this.displayData   &&
+                    this.selectedEndDate == null)
+                    
+                ){
+                    this.isSelected = true;
+                    // const endDayDate = moment(this.selectedStartDate).add(3, 'day');
+                    // this.$store.commit('SET_SELECTED_END_DATE', endDayDate);
+                    // console.log(endDayDate);
+                }
+                else
+                    this.isSelected = false;
+
+                if( selectedStartMonth != currCalendarMonth )
+                    this.isSelected = false;
+
+            }else   this.isSelected = false;
+            if( this.selectedStartDate == null && this.selectedEndDate == null )
+                this.isSelected = false;
+        },
+        selectEndCell(){
+            if(this.month_year != undefined && this.month_year != null){
+                var currCalendarMonth = this.month_year.split(' ')[0];
+                var currCalendarYear = this.month_year.split(' ')[1];
+            }else   this.isSelected = false;
+
+            if(this.selectedEndDate != undefined && this.selectedEndDate != null){ 
+                var selectedEndMonth = this.selectedEndDate.split(' ')[1];
+                var selectedEndYear = this.selectedEndDate.split(' ')[3];
+                var selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
+                var selectedStartDayNumber = Number(this.selectedStartDate.split(' ')[2]);
+
+                if(
+                    (selectedEndDayNumber == this.displayData   &&
+                    selectedEndMonth == currCalendarMonth       &&
+                    selectedEndYear == currCalendarYear)        
+                ){   
+                    this.isSelected = true;
+                }
+                else if( selectedEndMonth != currCalendarMonth && selectedStartDayNumber != this.displayData)
+                    this.isSelected = false;
+
+
+            }else   this.isSelected = false;
+            
         }
     },
     data(){
@@ -33,91 +104,44 @@ export default {
         }
     },
     created: function(){
-        
-        if(this.month_year != undefined && this.month_year != null) var currCalendarMonth = this.month_year.split(' ')[0];
-        
-        if(this.selectedStartDate != null && this.selectedStartDate != undefined){  
-            var selectedStartMonth = this.selectedStartDate.split(' ')[1];
-            var selectedStartDayNumber = Number(this.selectedStartDate.split(' ')[2]);
-        
-            if(this.selectedStartDate != null && selectedStartDayNumber == this.displayData && selectedStartMonth == currCalendarMonth){
-                this.isSelected = true;
-            }else{
-                this.isSelected = false;
-            }
-        }
-        if(this.selectedEndDate != null && this.selectedEndDate != undefined){  
-            var selectedEndMonth = this.selectedEndDate.split(' ')[1];
-            var selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
-            if(this.selectedEndDate != null && selectedEndDayNumber == this.displayData && selectedEndMonth == currCalendarMonth){
-                this.isSelected = true;
-            }else if(selectedStartDayNumber != this.displayData && selectedEndMonth == currCalendarMonth){
-                this.isSelected = false;
-            }
-        }
-        
-        if(
-            (this.omitPreviousDays && Number(this.displayData) < Number(moment().format('DD')) &&
-            currCalendarMonth == moment().format('MMM')) || this.displayData == ' ')  this.isDisabled = true;
+        this.disableCell();
+        this.selectStartCell();
+        this.selectEndCell();
     },
     watch:{
         month_year: function(month_year){
-            
-            const currCalendarMonth = month_year.split(' ')[0];
-            const selectedStartMonth = this.selectedStartDate.split(' ')[1];
-            const selectedStartDayNumber = Number(this.selectedStartDate.split(' ')[2]);
-            let selectedEndDayNumber = null;
-            console.log('currCalendarMonth ' + currCalendarMonth + ' currMonth ' + moment().format('MMM'))
-            if(this.selectedEndDate != null){ 
-                selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
-                var selectedEndMonth = this.selectedEndDate.split(' ')[1];
-            }
-
-            if(
-                (this.selectedStartDate != null && selectedStartDayNumber == this.displayData && selectedStartMonth == currCalendarMonth) ||
-                (this.selectedEndDate != null && selectedEndDayNumber == this.displayData && selectedEndMonth == currCalendarMonth)
-                ){
-                this.isSelected = true;
-            }else{
-                this.isSelected = false;
-            }
-            if( this.omitPreviousDays && Number(this.displayData) < Number(moment().format('DD')) && currCalendarMonth == moment().format('MMM')) this.isDisabled = true;
-            else    this.isDisabled = false;
+            this.disableCell();
+            this.selectStartCell();
         },
         selectedStartDate: function(selectedStartDate){
-            const currCalendarMonth = this.month_year.split(' ')[0];
-            const selectedMonth = selectedStartDate.split(' ')[1];
-            const selectedDayNumber = Number(selectedStartDate.split(' ')[2]);
-            // console.log(`selectedStartDate ${selectedStartDate} month_year ${this.month_year}`);
-            if(selectedStartDate != null && selectedMonth != currCalendarMonth){
-                this.isSelected = false;
-                return;
-            }
-            if(selectedStartDate == null && this.selectedEndDate == null){
-                this.isSelected = false;
-                return;
-            } 
-            if(selectedDayNumber == this.displayData && this.selectedEndDate == null)    this.isSelected = true;   // checks if the sent date's day == this day number
-            else if(this.selectedEndDate != null) this.isSelected = true;
-            else this.isSelected = false;
+            this.disableCell();
+            this.selectStartCell();
         },
-        selectedEndDate: function(selectedEndDate){
-            const currCalendarMonth = this.month_year.split(' ')[0];
-            
-            let selectedEndDayNumber, selectedStartDayNumber = null;
-            
-            if(selectedEndDate != null){
-                selectedEndDayNumber = Number(selectedEndDate.split(' ')[2]);
-                var selectedMonth = selectedEndDate.split(' ')[1];
+        selectedEndDate: function(){
+            try {
+                if(this.selectedEndDate != null && this.selectedEndDate != undefined){
+                    var currCalendarMonth = this.month_year.split(' ')[0];
+                    var currCalendarYear = this.month_year.split(' ')[1];
+                    var selectedEndDayNumber = Number(this.selectedEndDate.split(' ')[2]);
+                    var selectedEndMonth = this.selectedEndDate.split(' ')[1];
+                }
+                this.disableCell();
+                if(selectedEndMonth == currCalendarMonth && selectedEndDayNumber == this.displayData){  
+                    this.isSelected = true;
+                    this.$emit('omit-calendar');
+                }    
+            } catch (error) {
+                ;
             }
-            if(this.selectedStartDate != null) selectedStartDayNumber= Number(this.selectedStartDate.split(' ')[2])
             
-            if(selectedMonth == currCalendarMonth && selectedEndDayNumber == this.displayData){  
-                this.isSelected = true;
-                this.$emit('omit-calendar');
-            }
-            else if(selectedStartDayNumber != this.displayData)    this.isSelected = false;
         }
+    }, computed:{
+        selectedStartDate(){
+            return this.$store.getters.getSelectedStartDate.format('ddd, MMM DD YYYY');
+        },
+        selectedEndDate(){
+            return this.$store.getters.getSelectedEndDate.format('ddd, MMM DD YYYY');
+        },
     }
 }
 </script>

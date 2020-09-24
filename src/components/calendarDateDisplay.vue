@@ -5,11 +5,25 @@
 </template>
 
 <script>
+
 export default {
     name: "calendar-date-display",
     props:{
-        selectedStartDate: String,
-        selectedEndDate: String
+        
+    },
+    data(){
+        return{  
+        }     
+    },
+    computed:{
+        selectedStartDate(){
+            return this.$store.getters.getSelectedStartDate.format('ddd, MMM DD YYYY');
+        },
+        selectedEndDate(){
+            return this.$store.getters.getSelectedEndDate.format('ddd, MMM DD YYYY');
+        },
+    },
+    watch:{
     }
 }
 </script>

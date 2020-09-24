@@ -1,5 +1,7 @@
 <template>
-    <div class="calendar-wrapper">
+    <div 
+    class="calendar-wrapper"
+    v-on-clickaway="setEndDate">
         <table>
             <thead>
                 <calendar-head
@@ -22,26 +24,18 @@
                 <calendar-body
                     :days="startMonthDaysNumbers"
                     :month_year="startDate.format('MMM YYYY')"
-                    :selectedStartDate="startDateToDisplay"
-                    :selectedEndDate="endDateToDisplay"
                     v-on:select-date="selectDate"
                     v-on:omit-calendar="omitCalendar"
                     :omitPreviousDays="omitPreviousDays"/>
                 <calendar-body
                     :days="endMonthDaysNumbers"
                     :month_year="endDate.format('MMM YYYY')"
-                    :selectedStartDate="startDateToDisplay"
-                    :selectedEndDate="endDateToDisplay" 
                     v-on:select-date="selectDate"
                     v-on:omit-calendar="omitCalendar"/>
             </tbody>
         </table>
         <hr style="width:50%; margin: .25em 7.5em .25em 7.5em">
-        <calendar-date-display
-            :selectedStartDate="startDateToDisplay"
-            :selectedEndDate="endDateToDisplay"/>
-                  <b-button
-        v-on:click="omitCalendar">omit calendar</b-button>
+        <calendar-date-display/>
     </div>
 </template>
 
@@ -50,21 +44,30 @@ import calendarBody from './calendarBody.vue'
 import calendarHead from './calendarHead.vue'
 import calendarDateDisplay from './calendarDateDisplay.vue'
 import moment from 'moment'
+import mixin from "../../mixin";
 
 export default {
     name: "calendar-wrapper",
+    mixins:mixin,
     created:function(){
         this.startMonthDaysNumbers = this.getMonthDays(moment());
         this.endMonthDaysNumbers = this.getMonthDays(moment().add(1,"month"));
-        this.startDateToDisplay = this.selectedStartDate.format('ddd, MMM DD');
-        this.endDateToDisplay = this.selectedEndDate.format('ddd, MMM DD');
+        try{
+            this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD YYYY');
+            this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD YYYY');    
+        }catch(error){
+            ;
+        }
+
     },
     props:{
-        selectedStartDate: moment(),
-        selectedEndDate: null,
         omitPreviousDays: {
             default: false,
             type: Boolean
+        },
+        displayDateFormat: {
+            type: String,
+            default: 'ddd, MMM DD'
         }
     },
     components:{
@@ -82,8 +85,6 @@ export default {
             dayNames: ['Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
             startDateToDisplay: null,
             endDateToDisplay: null,
-            selectedStartDateCopy: this.selectedStartDate,
-            selectedEndDateCopy: this.selectedEndDate
         }
     },
     methods:{
@@ -128,15 +129,40 @@ export default {
                 this.selectedEndDateCopy = null;
             }
             else    this.selectedEndDateCopy = selectedDate;
-            if(this.selectedStartDateCopy != null) this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD');
+            if(this.selectedStartDateCopy != null){
+               this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD YYYY');
+               this.$store.commit('SET_SELECTED_START_DATE', moment(this.selectedStartDateCopy.format('ddd, MMM DD YYYY'))) 
+            } 
             else this.startDateToDisplay = null;
-            if(this.selectedEndDateCopy != null) this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD');
+            if(this.selectedEndDateCopy != null){
+                this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD YYYY');
+                this.$store.commit('SET_SELECTED_END_DATE', moment(this.selectedEndDateCopy.format('ddd, MMM DD YYYY')));
+                // console.log(this.$store.getters.getSelectedEndDate);
+            } 
             else this.endDateToDisplay = null;
-            console.log(`start ${this.selectedStartDateCopy} end ${this.selectedEndDateCopy}`);
+            
+            
+            // console.log(`start ${this.selectedStartDateCopy} end ${this.selectedEndDateCopy}`);
+        },
+        setEndDate(){
+            const endDayDate = moment(this.selectedStartDate).add(3, 'day');
+            this.$store.commit('SET_SELECTED_END_DATE', endDayDate);
+            this.$emit('omit-calendar');
         },
         omitCalendar(){
-            this.$emit('omit-calendar', this.selectedStartDateCopy, this.selectedEndDateCopy);
+            ;
+        },
+        formatDisplayDate(dateString){
+            
         }
+    },
+    computed:{
+        selectedStartDate(){
+            return this.$store.getters.getSelectedStartDate;
+        },
+        selectedEndDate(){
+            return this.$store.getters.getSelectedEndDate;
+          }
     }
 }
 </script>

@@ -34,6 +34,7 @@
 
 <script>
 import calendarCell from './calendarCell.vue'
+import moment from 'moment'
 export default {
     name: "calendarHead",
     components:{
@@ -51,7 +52,25 @@ export default {
         dayNames: Array
     },
     methods:{
-        
+        disablePrevMonthBtn(){
+            const currCalendarMonth = Number(moment(this.month_year.split(' ')[0],'MMMM').format('MM')) - 1;
+            const currCalendarYear = Number(moment(this.month_year.split(' ')[1],'YYYY').format('YYYY'));
+            const currMonth = Number(moment().format('MM'));
+            const currYear = Number(moment().format('YYYY'));
+            
+            if(currCalendarMonth == currMonth && currCalendarYear == currYear){ 
+                document.getElementById('prevMonthBtn').className += " disabledBtn";   
+            }
+            else    document.getElementById('prevMonthBtn').classList.remove("disabledBtn");
+        }
+    },
+    watch:{
+        month_year: function(month_year){
+            this.disablePrevMonthBtn();
+        }
+    },
+    mounted(){
+            this.disablePrevMonthBtn();
     }
 }
 </script>
@@ -91,5 +110,9 @@ export default {
         background-color:transparent;
         border: none;        
         outline: none;
+    }
+
+    .disabledBtn{
+        display: none;
     }
 </style>

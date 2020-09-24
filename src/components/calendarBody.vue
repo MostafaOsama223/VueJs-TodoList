@@ -5,8 +5,6 @@
             :key="index"
             :displayData="day"
             v-on:select-date="selectDate"
-            :selectedStartDate="selectedStartDate"
-            :selectedEndDate="selectedEndDate"
             :month_year="month_year"
             v-on:omit-calendar="$emit('omit-calendar')"
             :omitPreviousDays="omitPreviousDays"/>
@@ -25,35 +23,28 @@ export default {
     data() {
         return{
             bindStartDate: Boolean,
-            bindEndDate: Boolean
+            bindEndDate: Boolean,
         }
     },
-    mounted(){
-          
+    computed:{
+        selectedStartDate(){
+            return this.$store.getters.getSelectedStartDate;
+        },
+        selectedEndDate(){
+            return this.$store.getters.getSelectedEndDate;
+          }
     },
     props:{
         days: Array,    //  Array of days numbers [1,2,3,4,..]
         month_year: String,   //  Date of current calendar "Oct"
-        selectedStartDate: String,
-        selectedEndDate: String,
         omitPreviousDays: Boolean
     },
     methods:{
         selectDate(selectedDate){
-            //  Sun, Sep 16
             this.$emit('select-date', selectedDate);
         }
     },
     watch:{
-        // month_year: function(v){
-        //     console.log(v);
-        // },
-        // selectedStartDate: function(v){
-        //     console.log(v);  
-        // },
-        // selectedEndDate: function(v){
-        //     console.log(v);  
-        // }
     }
 }
 </script>
