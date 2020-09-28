@@ -3,17 +3,17 @@
         <calendar-cell
             v-for="(day, index) in days"
             :key="index"
-            :displayData="day"
-            v-on:select-date="selectDate"
-            :month_year="month_year"
-            v-on:omit-calendar="$emit('omit-calendar')"
-            :omitPreviousDays="omitPreviousDays"/>
+            :display-data="day"
+            :is-previous-days-omitted="isPreviousDaysOmitted"
+            :selected-date="selectedDate"
+            :curr-calendar-date="currCalendarDate"
+            @select-date="selectDate"
+            @omit-calendar="$emit('omit-calendar')"/>
     </div>
 </template>
 
 <script>
 import calendarCell from './calendarCell.vue'
-// import moment from 'moment'
  
 export default {
     name: "calendarBody",
@@ -27,17 +27,16 @@ export default {
         }
     },
     computed:{
-        selectedStartDate(){
-            return this.$store.getters.getSelectedStartDate;
-        },
-        selectedEndDate(){
-            return this.$store.getters.getSelectedEndDate;
-          }
+
     },
     props:{
         days: Array,    //  Array of days numbers [1,2,3,4,..]
-        month_year: String,   //  Date of current calendar "Oct"
-        omitPreviousDays: Boolean
+        currCalendarDate: Date,   //  Date of current calendar "Oct"
+        isPreviousDaysOmitted: Boolean,
+        highlightBetweenDays: Boolean,
+        selectedDate: {
+            type: Object
+        }
     },
     methods:{
         selectDate(selectedDate){

@@ -1,42 +1,63 @@
 <template>
+<div
+    @update="update()">
+    <input 
+        class="h-100"
+        type="button" 
+        @click="showCalendar=true"
+        :value="value.start"
+        @input="update()"
+        style="min-width:20em">
+
+<!-- :value="[displayedDate.start]+' - '+[displayedDate.end]" -->
     <div 
-    class="calendar-wrapper"
-    v-on-clickaway="setEndDate">
+        class="calendar-wrapper"
+        v-on-clickaway="omitCalendar"
+        v-if="showCalendar"
+        @omit-calendar="omitCalendar">
         <table>
             <thead>
                 <calendar-head
-                    :month_year="startDate.format('MMMM YYYY')"
-                    :leftArrow="true"
-                    :rightArrow="false"
-                    :dayNames="dayNames"
-                    v-on:prev-month="prevMonth"
-                    :omitPreviousDays="omitPreviousDays"/>
+                    :currCalendarDate="calendarStartDate.toDate()"
+                    :left-arrow="true"
+                    :right-arrow="false"
+                    :day-names="dayNames"
+                    :is-previous-days-omitted="isPreviousDaysOmitted"
+                    @prev-month="prevMonth"/>
                 
                 <calendar-head
-                    :month_year="endDate.format('MMMM YYYY')"
-                    :leftArrow="false"
-                    :rightArrow="true"
-                    :dayNames="dayNames"
-                    v-on:next-month="nextMonth"/>
+                    :currCalendarDate="calendarEndDate.toDate()"
+                    :left-arrow="false"
+                    :right-arrow="true"
+                    :day-names="dayNames"
+                    :is-previous-days-omitted="isPreviousDaysOmitted"
+                    @next-month="nextMonth"/>
                 
             </thead>
             <tbody>
                 <calendar-body
                     :days="startMonthDaysNumbers"
-                    :month_year="startDate.format('MMM YYYY')"
-                    v-on:select-date="selectDate"
-                    v-on:omit-calendar="omitCalendar"
-                    :omitPreviousDays="omitPreviousDays"/>
+                    :curr-calendar-date="calendarStartDate.toDate()"
+                    :is-previous-days-omitted="isPreviousDaysOmitted"
+                    :selected-date="selectedDate"
+                    @select-date="selectDate"
+                    @omit-calendar="omitCalendar"/>
+
                 <calendar-body
                     :days="endMonthDaysNumbers"
-                    :month_year="endDate.format('MMM YYYY')"
-                    v-on:select-date="selectDate"
-                    v-on:omit-calendar="omitCalendar"/>
+                    :curr-calendar-date="calendarEndDate.toDate()"
+                    :selected-date="selectedDate"                    
+                    @select-date="selectDate"
+                    @omit-calendar="omitCalendar"/>
             </tbody>
         </table>
         <hr style="width:50%; margin: .25em 7.5em .25em 7.5em">
-        <calendar-date-display/>
-    </div>
+        <calendar-date-display
+            :start-date-to-display="displayedDate.start"
+            :end-date-to-display="displayedDate.end"/>
+    </div>    
+</div>
+
 </template>
 
 <script>
@@ -44,31 +65,32 @@ import calendarBody from './calendarBody.vue'
 import calendarHead from './calendarHead.vue'
 import calendarDateDisplay from './calendarDateDisplay.vue'
 import moment from 'moment'
-import mixin from "../../mixin";
+import { directive as onClickaway } from "vue-clickaway"
 
 export default {
     name: "calendar-wrapper",
-    mixins:mixin,
     created:function(){
         this.startMonthDaysNumbers = this.getMonthDays(moment());
         this.endMonthDaysNumbers = this.getMonthDays(moment().add(1,"month"));
-        try{
-            this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD YYYY');
-            this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD YYYY');    
-        }catch(error){
-            ;
-        }
-
     },
     props:{
-        omitPreviousDays: {
+        isPreviousDaysOmitted: {
             default: false,
-            type: Boolean
+            type: Boolean,
+            require: false
         },
         displayDateFormat: {
             type: String,
-            default: 'ddd, MMM DD'
-        }
+            default: 'ddd, MMM DD',
+            require: false
+        },
+        highlightBetweenDays: {
+            type: Boolean,
+            default: false,
+            require: false,
+        },
+        value: null
+
     },
     components:{
         calendarBody,
@@ -77,14 +99,20 @@ export default {
     },
     data() {
         return{
-            startDate: moment(),
-            endDate: moment().add(1,"month"),
+            calendarStartDate: moment(),
+            calendarEndDate: moment().add(1,"month"),
             startMonthDaysNumbers: [],
             endMonthDaysNumbers: [],
-            disabledDays:[],
             dayNames: ['Su','Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-            startDateToDisplay: null,
-            endDateToDisplay: null,
+            displayedDate: {
+                start: 'Start Date',
+                end: 'End Date'
+            },
+            showCalendar: false,
+            selectedDate:{
+                start: null,
+                end: null
+            }
         }
     },
     methods:{
@@ -111,58 +139,50 @@ export default {
             return currentDate.endOf("month");
         },
         nextMonth(){
-            this.startMonthDaysNumbers = this.getMonthDays(this.startDate.add(1,"month"));
-            this.endMonthDaysNumbers = this.getMonthDays(this.endDate.add(1,"month"));
+            this.startMonthDaysNumbers = this.getMonthDays(this.calendarStartDate.add(1,"month"));
+            this.endMonthDaysNumbers = this.getMonthDays(this.calendarEndDate.add(1,"month"));
         },
         prevMonth(){
-            this.startMonthDaysNumbers = this.getMonthDays(this.startDate.subtract(1,"month"));
-            this.endMonthDaysNumbers = this.getMonthDays(this.endDate.subtract(1,"month"));
+            this.startMonthDaysNumbers = this.getMonthDays(this.calendarStartDate.subtract(1,"month"));
+            this.endMonthDaysNumbers = this.getMonthDays(this.calendarEndDate.subtract(1,"month"));
         },
-        selectDate(selectedDate){
-            selectedDate = moment(selectedDate, 'D-MMMM-YYYY');
+        selectDate(date){
             
-            if(this.selectedStartDateCopy === null && this.selectedEndDateCopy === null) this.selectedStartDateCopy = selectedDate;
-            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy === null && selectedDate.diff(moment(this.selectedStartDateCopy)) > 0) this.selectedEndDateCopy = selectedDate;
-            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy === null && selectedDate.diff(moment(this.selectedStartDateCopy)) < 0) this.selectedStartDateCopy = selectedDate;
-            else if(this.selectedStartDateCopy !== null && this.selectedEndDateCopy !== null){
-                this.selectedStartDateCopy = selectedDate;
-                this.selectedEndDateCopy = null;
+            const areDatesNull = !this.selectedDate.start ^ !this.selectedDate.end;
+
+            if(!areDatesNull){
+                this.selectedDate.start = date;
+                this.selectedDate.end = null;
+            }else{
+                const isSelectedAfterStartDate = moment(date).diff(moment(this.selectedDate.start)) > 0;
+                isSelectedAfterStartDate ? this.selectedDate.end = date : this.selectedDate.start = date;
+                
             }
-            else    this.selectedEndDateCopy = selectedDate;
-            if(this.selectedStartDateCopy != null){
-               this.startDateToDisplay = this.selectedStartDateCopy.format('ddd, MMM DD YYYY');
-               this.$store.commit('SET_SELECTED_START_DATE', moment(this.selectedStartDateCopy.format('ddd, MMM DD YYYY'))) 
-            } 
-            else this.startDateToDisplay = null;
-            if(this.selectedEndDateCopy != null){
-                this.endDateToDisplay = this.selectedEndDateCopy.format('ddd, MMM DD YYYY');
-                this.$store.commit('SET_SELECTED_END_DATE', moment(this.selectedEndDateCopy.format('ddd, MMM DD YYYY')));
-                // console.log(this.$store.getters.getSelectedEndDate);
-            } 
-            else this.endDateToDisplay = null;
-            
-            
-            // console.log(`start ${this.selectedStartDateCopy} end ${this.selectedEndDateCopy}`);
-        },
-        setEndDate(){
-            const endDayDate = moment(this.selectedStartDate).add(3, 'day');
-            this.$store.commit('SET_SELECTED_END_DATE', endDayDate);
-            this.$emit('omit-calendar');
+
+            if(this.selectedDate.start){
+                this.displayedDate.start = moment(this.selectedDate.start).format('ddd, MMM DD YYYY');
+            } else this.displayed.start = null;
+
+            if(this.selectedDate.end){
+                this.displayedDate.end = moment(this.selectedDate.end).format('ddd, MMM DD YYYY');
+            } else this.displayedDate.end = null;
+            this.$emit('update');
         },
         omitCalendar(){
-            ;
+            if(this.selectedDate.start && this.selectedDate.end){
+                this.showCalendar = false;
+            }else{
+                console.log('Make Sure To Select Both Dates!')
+            }
         },
-        formatDisplayDate(dateString){
-            
+        update(){
+            console.log(this.selectedDate);
+            this.$emit('update', this.selectedDate)
         }
+
     },
-    computed:{
-        selectedStartDate(){
-            return this.$store.getters.getSelectedStartDate;
-        },
-        selectedEndDate(){
-            return this.$store.getters.getSelectedEndDate;
-          }
+    directives:{
+        onClickaway
     }
 }
 </script>
@@ -174,9 +194,10 @@ export default {
         padding: 1em;
         box-shadow: 0em 0em .5em #CCC;
         min-height: 21 !important;
-        min-width: 30;
+        min-width: 32em !important;
+        /* width: 30 */
         position: absolute;
         z-index: 10;
-        top: 3.75em;
+        top: 2em;
     }
 </style>

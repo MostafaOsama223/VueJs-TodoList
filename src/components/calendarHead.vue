@@ -1,7 +1,8 @@
 <template>
     <div class="calendar-head">
         <b-button 
-                id="prevMonthBtn" 
+                :class="{disabled: isDisabled}" 
+                id="prevMonthBtn"
                 v-if="leftArrow"
                 v-on:click="$emit('prev-month')">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -10,7 +11,7 @@
         </b-button>
 
         <p class="monthName">
-            {{month_year}}   
+            {{currCalendarDate.getUTCMonth() + 1}}/{{currCalendarDate.getUTCFullYear()}}   
         </p>
         
         <b-button 
@@ -42,35 +43,36 @@ export default {
     },
     data() {
         return{
-            
+
         }
     },
     props:{
-        month_year: String,
+        currCalendarDate: {
+            type: Date,
+            default: null
+        },
         leftArrow: Boolean,
         rightArrow: Boolean,
-        dayNames: Array
+        dayNames: Array,
+        isPreviousDaysOmitted: Boolean
     },
     methods:{
-        disablePrevMonthBtn(){
-            const currCalendarMonth = Number(moment(this.month_year.split(' ')[0],'MMMM').format('MM')) - 1;
-            const currCalendarYear = Number(moment(this.month_year.split(' ')[1],'YYYY').format('YYYY'));
-            const currMonth = Number(moment().format('MM'));
-            const currYear = Number(moment().format('YYYY'));
-            
-            if(currCalendarMonth == currMonth && currCalendarYear == currYear){ 
-                document.getElementById('prevMonthBtn').className += " disabledBtn";   
-            }
-            else    document.getElementById('prevMonthBtn').classList.remove("disabledBtn");
-        }
+
     },
     watch:{
-        month_year: function(month_year){
-            this.disablePrevMonthBtn();
-        }
+
     },
-    mounted(){
-            this.disablePrevMonthBtn();
+    computed:{
+        isDisabled(){
+            const currCalendarMonth = this.currCalendarDate.getUTCMonth() + 1;
+            const currCalendarYear = this.currCalendarDate.getUTCFullYear();
+            const currMonth = Number(moment().format('MM'));
+            const currYear = Number(moment().format('YYYY'));
+            const isCalendarDateEqualCurrDate = currCalendarMonth == currMonth && currCalendarYear == currYear;
+
+            if(isCalendarDateEqualCurrDate && this.isPreviousDaysOmitted)   return true;   
+            else   return false; 
+        }
     }
 }
 </script>
@@ -112,7 +114,7 @@ export default {
         outline: none;
     }
 
-    .disabledBtn{
+    .disabled{
         display: none;
     }
 </style>

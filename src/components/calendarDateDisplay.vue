@@ -1,29 +1,35 @@
 <template>
     <div class="calendar-date-display"> 
-        {{selectedStartDate}} - {{selectedEndDate}}
+        {{startDateToDisplay}} - {{endDateToDisplay}}
     </div>
 </template>
 
 <script>
-
+import moment from 'moment'
 export default {
+    
     name: "calendar-date-display",
     props:{
-        
+        displayDateFormat: String,
+        startDateToDisplay: String,
+        endDateToDisplay: String
     },
     data(){
         return{  
         }     
     },
     computed:{
-        selectedStartDate(){
-            return this.$store.getters.getSelectedStartDate.format('ddd, MMM DD YYYY');
-        },
-        selectedEndDate(){
-            return this.$store.getters.getSelectedEndDate.format('ddd, MMM DD YYYY');
-        },
+
     },
     watch:{
+        startDateToDisplay(startDateToDisplay){
+            if(startDateToDisplay != null)   return moment(startDateToDisplay).format(this.displayDateFormat)
+            else    return 'Start Date';
+        },
+        endDateToDisplay(endDateToDisplay){            
+            if(endDateToDisplay != null)   return moment(endDateToDisplay).format(this.displayDateFormat)
+            else    return 'End Date';
+        }
     }
 }
 </script>
